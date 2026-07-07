@@ -311,6 +311,8 @@ header {
   text-align: center;
   background-color: rgba(255, 255, 255, 0.7);
   transition: all 0.2s ease;
+  color: var(--text-main);
+  min-width: 0;
 }
 
 .manual-adj-input:focus {
@@ -643,6 +645,9 @@ header {
   outline: none;
   background-color: rgba(255, 255, 255, 0.7);
   transition: all 0.2s ease;
+  color: var(--text-main);
+  width: 100%;
+  min-width: 0;
 }
 
 .text-input:focus {
@@ -908,6 +913,7 @@ header {
   transition: all 0.2s ease;
   color: var(--text-main);
   background: white;
+  min-width: 0;
 }
 .edit-input:focus {
   border-color: var(--admin-primary);
@@ -929,4 +935,41 @@ header {
 /* Utilities */
 .hidden {
   display: none !important;
+}
+
+/* Mobile settings optimizations */
+@media (max-width: 480px) {
+  .settings-section-card {
+    padding: 18px;
+    border-radius: var(--border-radius-md);
+  }
+  .settings-item-row {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+  .add-item-form {
+    padding: 12px;
+  }
+  .add-item-row {
+    gap: 6px;
+  }
+  .edit-input {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  .edit-input-emoji {
+    width: 42px;
+  }
+  .edit-input-points {
+    width: 58px;
+  }
+  .edit-input-name {
+    min-width: 45px;
+  }
+  .settings-item-actions {
+    gap: 4px;
+  }
+  .btn-icon {
+    padding: 6px;
+  }
 }
