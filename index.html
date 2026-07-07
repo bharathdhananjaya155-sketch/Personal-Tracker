@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Dallas Palace Chore Tracker</title>
   
   <!-- iOS Meta Tags for Home Screen Web App -->
@@ -13,7 +13,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="tracker.css">
 </head>
@@ -341,6 +341,19 @@ Technical Requirements
 
     // Modal Prompts helper variables
     let modalActionCallback = null;
+    let savedScrollY = 0;
+
+    function lockBodyScroll() {
+      savedScrollY = window.scrollY;
+      document.body.classList.add('modal-open');
+      document.body.style.top = `-${savedScrollY}px`;
+    }
+
+    function unlockBodyScroll() {
+      document.body.classList.remove('modal-open');
+      document.body.style.top = '';
+      window.scrollTo(0, savedScrollY);
+    }
 
     function openConfirmModal(title, desc, confirmText, callback) {
       document.getElementById('modal-title-text').innerText = title;
@@ -350,14 +363,44 @@ Technical Requirements
       
       modalActionCallback = callback;
       document.getElementById('confirm-modal-overlay').classList.add('active');
+      lockBodyScroll();
     }
 
     function closeConfirmModal(confirmed) {
       document.getElementById('confirm-modal-overlay').classList.remove('active');
+      unlockBodyScroll();
       if (confirmed && modalActionCallback) {
         modalActionCallback();
       }
       modalActionCallback = null;
+    }
+
+    // Prevent accidental taps while scrolling on touch devices
+    function attachScrollSafeClick(element, handler) {
+      let startX = 0;
+      let startY = 0;
+      let moved = false;
+
+      element.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        moved = false;
+      }, { passive: true });
+
+      element.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        if (Math.abs(touch.clientX - startX) > 10 || Math.abs(touch.clientY - startY) > 10) {
+          moved = true;
+        }
+      }, { passive: true });
+
+      element.addEventListener('click', (e) => {
+        if (moved) {
+          e.preventDefault();
+          return;
+        }
+        handler(e);
+      });
     }
 
     // Show custom toast notification
@@ -935,7 +978,7 @@ Technical Requirements
           const card = document.createElement('div');
           card.id = `chore-card-${kidIndex}-${chore.id}`;
           card.className = `item-card ${isToggled ? 'chore-active' : ''}`;
-          card.onclick = (e) => toggleChore(kidIndex, chore.id, e);
+          attachScrollSafeClick(card, (e) => toggleChore(kidIndex, chore.id, e));
 
           card.innerHTML = `
             <div class="item-info">
@@ -964,7 +1007,7 @@ Technical Requirements
           const card = document.createElement('div');
           card.id = `penalty-card-${kidIndex}-${penalty.id}`;
           card.className = `item-card ${isToggled ? 'penalty-active' : ''}`;
-          card.onclick = (e) => togglePenalty(kidIndex, penalty.id, e);
+          attachScrollSafeClick(card, (e) => togglePenalty(kidIndex, penalty.id, e));
 
           card.innerHTML = `
             <div class="item-info">
@@ -998,8 +1041,10 @@ Technical Requirements
       canvas.height = window.innerHeight;
     }
     
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas, { passive: true });
     resizeCanvas();
+
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
     class Particle {
       constructor(x, y) {
@@ -1043,8 +1088,8 @@ Technical Requirements
     }
 
     function triggerConfetti(startX, startY) {
-      // Spawn particles
-      for (let i = 0; i < 40; i++) {
+      const particleCount = isMobile ? 18 : 40;
+      for (let i = 0; i < particleCount; i++) {
         particles.push(new Particle(startX, startY));
       }
       
@@ -1057,16 +1102,15 @@ Technical Requirements
     function animateParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Update and draw
-      particles.forEach((p, idx) => {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
         p.update();
         p.draw();
         
-        // Remove dead particles
         if (p.opacity <= 0 || p.y > canvas.height) {
-          particles.splice(idx, 1);
+          particles.splice(i, 1);
         }
-      });
+      }
 
       if (particles.length > 0) {
         animationId = requestAnimationFrame(animateParticles);

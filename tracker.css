@@ -58,7 +58,14 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -66,14 +73,24 @@ body {
   background: var(--theme-bg-gradient);
   color: var(--text-main);
   line-height: 1.5;
-  padding-bottom: 60px;
+  padding-bottom: max(60px, calc(env(safe-area-inset-bottom) + 24px));
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: background var(--transition-speed) ease;
-  overflow-x: hidden;
+  overflow-x: clip;
+  overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
+}
+
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  touch-action: none;
 }
 
 /* Confetti Canvas */
@@ -81,8 +98,8 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 9999;
 }
@@ -92,9 +109,10 @@ body {
   width: 100%;
   max-width: 700px;
   padding: 20px 16px;
+  padding-top: max(20px, env(safe-area-inset-top));
   position: relative;
   animation: fadeIn 0.4s ease-out;
-  overflow: hidden;
+  overflow-x: clip;
 }
 
 @keyframes fadeIn {
@@ -112,9 +130,10 @@ header {
 }
 
 .brand-title {
-  font-family: var(--font-display);
+  font-family: var(--font-display), system-ui, sans-serif;
   font-weight: 800;
   font-size: 28px;
+  min-height: 1.2em;
   background: linear-gradient(135deg, #ff5a79 0%, #8b5cf6 50%, #06b6d4 100%);
   background-clip: text;
   -webkit-background-clip: text;
@@ -151,7 +170,7 @@ header {
   color: var(--text-muted);
   cursor: pointer;
   border-radius: var(--border-radius-md);
-  transition: all var(--transition-speed) var(--ease-elastic);
+  transition: color var(--transition-speed) ease, background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease, transform var(--transition-speed) var(--ease-elastic);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -159,11 +178,16 @@ header {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-.nav-tab:hover {
-  color: var(--text-main);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .nav-tab:hover {
+    color: var(--text-main);
+    transform: translateY(-1px);
+  }
 }
 
 .nav-tab.active {
@@ -184,8 +208,14 @@ header {
   overflow: hidden;
   box-shadow: 0 20px 40px var(--theme-shadow);
   margin-bottom: 28px;
-  transition: all var(--transition-speed) ease;
+  transition: background var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
   border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dashboard-hero::before {
+    animation: shine 8s linear infinite;
+  }
 }
 
 .dashboard-hero::before {
@@ -197,7 +227,6 @@ header {
   height: 200%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 60%);
   pointer-events: none;
-  animation: shine 8s linear infinite;
 }
 
 @keyframes shine {
@@ -228,13 +257,19 @@ header {
   justify-content: center;
   margin: 8px 0;
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15), inset 0 4px 12px rgba(255, 255, 255, 0.25);
-  animation: float 4.5s ease-in-out infinite;
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+  will-change: transform;
 }
 
-.points-bubble:hover {
-  transform: scale(1.05);
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.2), inset 0 4px 12px rgba(255, 255, 255, 0.3);
+@media (hover: hover) and (pointer: fine) {
+  .points-bubble {
+    animation: float 4.5s ease-in-out infinite;
+  }
+
+  .points-bubble:hover {
+    transform: scale(1.05);
+    box-shadow: 0 16px 44px rgba(0, 0, 0, 0.2), inset 0 4px 12px rgba(255, 255, 255, 0.3);
+  }
 }
 
 .points-bubble.pop {
@@ -285,9 +320,11 @@ header {
   transition: transform var(--transition-speed) var(--ease-elastic), box-shadow var(--transition-speed) ease;
 }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.05);
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.05);
+  }
 }
 
 .card-title {
@@ -342,8 +379,11 @@ header {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.25s var(--ease-elastic);
+  transition: transform 0.25s var(--ease-elastic), box-shadow 0.25s ease, background-color 0.25s ease;
   color: white;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .btn:active {
@@ -353,11 +393,6 @@ header {
 .btn-theme {
   background: var(--theme-gradient);
   box-shadow: 0 6px 16px var(--theme-shadow);
-}
-
-.btn-theme:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px var(--theme-shadow);
 }
 
 .btn-theme:active {
@@ -371,19 +406,26 @@ header {
   font-weight: 700;
 }
 
-.btn-secondary:hover {
-  background-color: #e2e8f0;
-  transform: translateY(-1px);
-}
-
 .btn-danger {
   background-color: var(--danger);
   box-shadow: 0 6px 16px rgba(239, 68, 68, 0.2);
 }
 
-.btn-danger:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(239, 68, 68, 0.3);
+@media (hover: hover) and (pointer: fine) {
+  .btn-theme:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px var(--theme-shadow);
+  }
+
+  .btn-secondary:hover {
+    background-color: #e2e8f0;
+    transform: translateY(-1px);
+  }
+
+  .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(239, 68, 68, 0.3);
+  }
 }
 
 .btn-danger:active {
@@ -435,14 +477,19 @@ header {
   justify-content: space-between;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02), inset 0 2px 4px rgba(255, 255, 255, 0.6);
   border: 2px solid rgba(255, 255, 255, 0.5);
-  transition: all var(--transition-speed) var(--ease-elastic);
+  transition: transform var(--transition-speed) var(--ease-elastic), box-shadow var(--transition-speed) ease, border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
   position: relative;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-.item-card:hover {
-  transform: translateY(-3px) scale(1.01);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+@media (hover: hover) and (pointer: fine) {
+  .item-card:hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+  }
 }
 
 .item-info {
@@ -506,6 +553,7 @@ header {
   display: inline-block;
   width: 52px;
   height: 30px;
+  touch-action: manipulation;
 }
 
 .switch input {
@@ -672,6 +720,8 @@ header {
   gap: 12px;
   max-height: 320px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   margin-bottom: 20px;
   padding-right: 4px;
 }
@@ -704,9 +754,11 @@ header {
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
-.settings-item-row:hover {
-  transform: translateX(2px);
-  border-color: #cbd5e1;
+@media (hover: hover) and (pointer: fine) {
+  .settings-item-row:hover {
+    transform: translateX(2px);
+    border-color: #cbd5e1;
+  }
 }
 
 .settings-item-info {
@@ -739,25 +791,32 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.btn-icon:hover {
-  transform: scale(1.1);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .btn-icon-edit {
   color: var(--admin-primary);
 }
-.btn-icon-edit:hover {
-  background-color: #ebe5fc;
-}
 
 .btn-icon-delete {
   color: var(--danger);
 }
-.btn-icon-delete:hover {
-  background-color: #fee2e2;
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-icon:hover {
+    transform: scale(1.1);
+  }
+
+  .btn-icon-edit:hover {
+    background-color: #ebe5fc;
+  }
+
+  .btn-icon-delete:hover {
+    background-color: #fee2e2;
+  }
 }
 
 .add-item-form {
@@ -814,6 +873,8 @@ header {
   color: #334155;
   max-height: 480px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.7;
@@ -824,8 +885,8 @@ header {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: rgba(15, 23, 42, 0.35);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -836,6 +897,8 @@ header {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
+  overscroll-behavior: contain;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .modal-overlay.active {
@@ -883,7 +946,7 @@ header {
 /* Custom Toast Notification */
 .toast {
   position: fixed;
-  bottom: 30px;
+  bottom: max(30px, calc(env(safe-area-inset-bottom) + 16px));
   left: 50%;
   transform: translate(-50%, 100px);
   background-color: rgba(15, 23, 42, 0.95);
@@ -903,6 +966,8 @@ header {
   align-items: center;
   gap: 10px;
   border: 1px solid rgba(255, 255, 255, 0.15);
+  max-width: calc(100% - 32px);
+  will-change: transform, opacity;
 }
 
 .toast.active {
@@ -946,10 +1011,63 @@ header {
   display: none !important;
 }
 
+/* Reduce GPU-heavy effects on touch devices to prevent scroll jank */
+@media (max-width: 768px) {
+  .nav-tabs,
+  .card,
+  .item-card,
+  .settings-section-card,
+  .prompt-container,
+  .points-bubble,
+  .modal-overlay,
+  .toast {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .dashboard-hero::before {
+    animation: none;
+  }
+}
+
 /* Mobile dashboard & settings optimizations */
 @media (max-width: 480px) {
   .app-container {
     padding: 16px 10px;
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+
+  .brand-title {
+    font-size: 24px;
+    gap: 8px;
+  }
+
+  .nav-tab {
+    padding: 12px 4px;
+    font-size: 13px;
+  }
+
+  .dashboard-hero {
+    padding: 24px 16px;
+    margin-bottom: 20px;
+  }
+
+  .hero-title {
+    font-size: 18px;
+  }
+
+  .points-bubble {
+    width: 120px;
+    height: 120px;
+  }
+
+  .points-num {
+    font-size: 36px;
+  }
+
+  .section-header {
+    font-size: 17px;
+    margin: 24px 0 10px 2px;
   }
 
   /* Controls row: stack Adjust Points and Day Over on small screens */
@@ -1028,6 +1146,33 @@ header {
   }
   .btn-icon {
     padding: 6px;
+  }
+
+  /* Prevent iOS auto-zoom on input focus */
+  .text-input,
+  .manual-adj-input,
+  .edit-input {
+    font-size: 16px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .dashboard-hero::before {
+    animation: none;
+  }
+
+  .points-bubble {
+    animation: none;
   }
 }
 
