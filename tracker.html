@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Dallas Palace Chore Tracker</title>
+  
+  <!-- iOS Meta Tags for Home Screen Web App -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dallas Palace">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="tracker.css">
+</head>
+<body>
+
+  <!-- Confetti Particle Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header>
+      <div class="brand-title">
+        <span>🏰</span>
+        <span>Dallas Palace</span>
+      </div>
+
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('kid-1')" id="tab-kid-1">Kid 1</button>
+      <button class="nav-tab" onclick="switchTab('kid-2')" id="tab-kid-2">Kid 2</button>
+      <button class="nav-tab" onclick="switchTab('prompt')" id="tab-prompt">Prompt</button>
+      <button class="nav-tab" onclick="switchTab('settings')" id="tab-settings">Settings</button>
+    </nav>
+
+    <!-- ================= DASHBOARDS ================= -->
+    <main>
+      
+      <!-- Kid 1 Dashboard View -->
+      <div id="view-kid-1" class="tab-view">
+        <!-- Hero Point Card -->
+        <div class="dashboard-hero">
+          <div class="hero-title" id="hero-title-1">James's Progress</div>
+          <div class="points-bubble" id="bubble-1">
+            <span class="points-num" id="points-1">0</span>
+            <span class="points-lbl">points</span>
+          </div>
+        </div>
+
+        <!-- Controls Row -->
+        <div class="controls-row">
+          <!-- Manual Adj Card -->
+          <div class="card">
+            <div class="card-title">
+              <span>✏️</span> Adjust Points
+            </div>
+            <div class="manual-adj-form">
+              <input type="number" class="manual-adj-input" id="adj-1" placeholder="+10 or -5">
+              <button class="btn btn-theme" onclick="applyManualAdjustment(0)">Apply</button>
+            </div>
+          </div>
+          <!-- Reset Switches Card -->
+          <div class="card">
+            <div class="card-title">
+              <span>🧹</span> Day Over?
+            </div>
+            <button class="btn btn-secondary btn-full" onclick="confirmResetSwitches(0)">
+              Reset Today's Switches
+            </button>
+          </div>
+        </div>
+
+        <!-- Chores Section -->
+        <div class="section-header">
+          <span>✨</span> Daily Chores
+        </div>
+        <div class="grid-container" id="chores-grid-1">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Penalties Section -->
+        <div class="section-header">
+          <span>⚠️</span> Warnings & Penalties
+        </div>
+        <div class="grid-container" id="penalties-grid-1">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Kid 2 Dashboard View -->
+      <div id="view-kid-2" class="tab-view hidden">
+        <!-- Hero Point Card -->
+        <div class="dashboard-hero">
+          <div class="hero-title" id="hero-title-2">Lily's Progress</div>
+          <div class="points-bubble" id="bubble-2">
+            <span class="points-num" id="points-2">0</span>
+            <span class="points-lbl">points</span>
+          </div>
+        </div>
+
+        <!-- Controls Row -->
+        <div class="controls-row">
+          <!-- Manual Adj Card -->
+          <div class="card">
+            <div class="card-title">
+              <span>✏️</span> Adjust Points
+            </div>
+            <div class="manual-adj-form">
+              <input type="number" class="manual-adj-input" id="adj-2" placeholder="+10 or -5">
+              <button class="btn btn-theme" onclick="applyManualAdjustment(1)">Apply</button>
+            </div>
+          </div>
+          <!-- Reset Switches Card -->
+          <div class="card">
+            <div class="card-title">
+              <span>🧹</span> Day Over?
+            </div>
+            <button class="btn btn-secondary btn-full" onclick="confirmResetSwitches(1)">
+              Reset Today's Switches
+            </button>
+          </div>
+        </div>
+
+        <!-- Chores Section -->
+        <div class="section-header">
+          <span>✨</span> Daily Chores
+        </div>
+        <div class="grid-container" id="chores-grid-2">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Penalties Section -->
+        <div class="section-header">
+          <span>⚠️</span> Warnings & Penalties
+        </div>
+        <div class="grid-container" id="penalties-grid-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- ================= PROMPT VIEW ================= -->
+      <div id="view-prompt" class="tab-view hidden">
+        <div class="prompt-container">
+          <div class="prompt-header">
+            <h3>App Creation Prompt</h3>
+            <button class="btn btn-theme" onclick="copyPromptText()" id="btn-copy-prompt">
+              <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24">
+                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+              </svg>
+              Copy Prompt
+            </button>
+          </div>
+          <div class="prompt-body" id="prompt-content">Build a colorful chore and task tracking app for 2 kids as a single downloadable HTML file that works as a web app on android phone/ipad (saved to home screen via any browser). Name it "Dallas Palace Chore Tracker".
+
+Next to the Settings button, add a tab named "Prompt" where the below prompt is pasted and nicely formatted - for anyone who wants to recreate the app using this prompt.
+
+Layout & Design
+• Two separate kid dashboards as tabs at the top
+• Tab labels should show the kid's actual name (customizable)
+• Theme with bright, colorful kid-friendly design
+• Each chore displayed as a colorful card with a toggle switch
+• Cumulative points displayed at the top of each kid's dashboard
+
+Chores & Points
+• Default starter chores: Make bed (5pts), Help with dishes (5pts), Practice (10pts), Exercise/Play outdoors (10pts), Tidy room (10pts), Cleanup after eating (5pts), Help cleaning living room (10pts), Homework (15pts)
+• Tapping a chore card toggles it on/off and adds/deducts points accordingly
+• A manual point adjustment field on each kid's page — type any positive or negative number and tap Apply to instantly update their total
+
+Penalties
+• A separate Penalties section in Settings where you can add negative-point items if needed (e.g. not eating vegetables/fruits -10 pts, too much screen time -20 pts)
+
+Settings Panel
+• Rename each kid (names update everywhere including tabs)
+• Add, edit, and delete chores with custom names and point values
+• Add, edit, and delete penalty items with custom names and point values
+• Total Reset should happen only with confirmation
+• A separate "Reset today's switches" button on each kid's dashboard that clears daily toggles without wiping cumulative points
+
+Technical Requirements
+• Single self-contained HTML file, no external dependencies
+• Uses localStorage to persist all data (points, names, chores, today's switches) between sessions
+• Includes apple-mobile-web-app-capable meta tags so it works cleanly when added to iPad home screen</div>
+        </div>
+      </div>
+
+      <!-- ================= SETTINGS VIEW ================= -->
+      <div id="view-settings" class="tab-view hidden">
+        <div class="settings-container">
+          
+          <!-- Rename Kids -->
+          <div class="settings-section-card">
+            <h3>👤 Rename Kids</h3>
+            <div class="settings-grid">
+              <div class="input-group">
+                <label class="input-label" for="input-kid1-name">Kid 1 Name</label>
+                <input type="text" class="text-input" id="input-kid1-name" oninput="saveKidNames()">
+              </div>
+              <div class="input-group">
+                <label class="input-label" for="input-kid2-name">Kid 2 Name</label>
+                <input type="text" class="text-input" id="input-kid2-name" oninput="saveKidNames()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Manage Chores -->
+          <div class="settings-section-card">
+            <h3>✨ Manage Chores</h3>
+            <div class="settings-items-list" id="settings-chores-list">
+              <!-- Rendered by JS -->
+            </div>
+            
+            <div class="add-item-form">
+              <h4 style="font-family: var(--font-display); font-size:14px; margin-bottom:6px;">Add New Chore</h4>
+              <div class="add-item-row">
+                <input type="text" class="text-input" id="new-chore-name" placeholder="Chore Name" style="padding: 8px;">
+                <input type="number" class="text-input" id="new-chore-points" placeholder="Pts" style="padding: 8px;">
+                <input type="text" class="text-input" id="new-chore-emoji" placeholder="Emoji" style="padding: 8px; text-align: center;">
+              </div>
+              <button class="btn btn-theme" onclick="addNewChore()" style="margin-top: 8px;">➕ Add Chore</button>
+            </div>
+          </div>
+
+          <!-- Manage Penalties -->
+          <div class="settings-section-card">
+            <h3>⚠️ Manage Penalties</h3>
+            <div class="settings-items-list" id="settings-penalties-list">
+              <!-- Rendered by JS -->
+            </div>
+            
+            <div class="add-item-form">
+              <h4 style="font-family: var(--font-display); font-size:14px; margin-bottom:6px;">Add New Penalty</h4>
+              <div class="add-item-row">
+                <input type="text" class="text-input" id="new-penalty-name" placeholder="Penalty Name" style="padding: 8px;">
+                <input type="number" class="text-input" id="new-penalty-points" placeholder="Pts" style="padding: 8px;">
+                <input type="text" class="text-input" id="new-penalty-emoji" placeholder="Emoji" style="padding: 8px; text-align: center;">
+              </div>
+              <button class="btn btn-danger" onclick="addNewPenalty()" style="margin-top: 8px;">➕ Add Penalty</button>
+            </div>
+          </div>
+
+          <!-- Total Reset -->
+          <div class="settings-section-card" style="border-color: rgba(239, 68, 68, 0.3);">
+            <h3 style="color: var(--danger); border-bottom-color: #fee2e2;">🚨 Danger Zone</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+              Wipe all points, rename kids back to default, and restore starter chores and penalty lists.
+            </p>
+            <button class="btn btn-danger btn-full" onclick="triggerTotalReset()">
+              ⚠️ Total Reset (Wipe Everything)
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Custom Confirmation Modals -->
+  <div class="modal-overlay" id="confirm-modal-overlay">
+    <div class="modal">
+      <div class="modal-title" id="modal-title-text">Confirm Action</div>
+      <div class="modal-desc" id="modal-desc-text">Are you sure you want to proceed?</div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeConfirmModal(false)">Cancel</button>
+        <button class="btn btn-danger" id="modal-confirm-btn" onclick="closeConfirmModal(true)">Yes, Proceed</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Toast Notification -->
+  <div class="toast" id="toast">
+    <span id="toast-emoji">🎉</span>
+    <span id="toast-text">Toggled successfully!</span>
+  </div>
+
+  <!-- ================= APP LOGIC ================= -->
+  <script>
+    // State management constants
+    const STORAGE_KEY = 'dallas_palace_chore_tracker_state';
+
+    const DEFAULT_CHORES = [
+      { id: 'c1', name: 'Make bed', points: 5, emoji: '🛏️' },
+      { id: 'c2', name: 'Help with dishes', points: 5, emoji: '🍽️' },
+      { id: 'c3', name: 'Practice', points: 10, emoji: '🎹' },
+      { id: 'c4', name: 'Exercise/Play outdoors', points: 10, emoji: '⚽' },
+      { id: 'c5', name: 'Tidy room', points: 10, emoji: '🧹' },
+      { id: 'c6', name: 'Cleanup after eating', points: 5, emoji: '🥣' },
+      { id: 'c7', name: 'Help cleaning living room', points: 10, emoji: '🛋️' },
+      { id: 'c8', name: 'Homework', points: 15, emoji: '📚' }
+    ];
+
+    const DEFAULT_PENALTIES = [
+      { id: 'p1', name: 'Not eating vegetables/fruits', points: -10, emoji: '🥦' },
+      { id: 'p2', name: 'Too much screen time', points: -20, emoji: '📱' },
+      { id: 'p3', name: 'Not listening / Backtalk', points: -15, emoji: '🙅' }
+    ];
+
+    // Global application state
+    let state = {
+      activeTab: 'kid-1', // 'kid-1', 'kid-2', 'prompt', 'settings'
+      kids: [
+        { id: 'k1', name: 'James', points: 0, switches: {} },
+        { id: 'k2', name: 'Lily', points: 0, switches: {} }
+      ],
+      chores: [...DEFAULT_CHORES],
+      penalties: [...DEFAULT_PENALTIES]
+    };
+
+    let editingChoreId = null;
+    let editingPenaltyId = null;
+
+    // Load initial state
+    function loadState() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        try {
+          const parsed = JSON.parse(data);
+          // Check version / compatibility structure
+          if (parsed && parsed.kids && parsed.chores && parsed.penalties) {
+            state = parsed;
+          }
+        } catch (e) {
+          console.error("Error loading localStorage data", e);
+        }
+      } else {
+        saveToLocalStorage();
+      }
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    // Modal Prompts helper variables
+    let modalActionCallback = null;
+
+    function openConfirmModal(title, desc, confirmText, callback) {
+      document.getElementById('modal-title-text').innerText = title;
+      document.getElementById('modal-desc-text').innerText = desc;
+      const confirmBtn = document.getElementById('modal-confirm-btn');
+      confirmBtn.innerText = confirmText;
+      
+      modalActionCallback = callback;
+      document.getElementById('confirm-modal-overlay').classList.add('active');
+    }
+
+    function closeConfirmModal(confirmed) {
+      document.getElementById('confirm-modal-overlay').classList.remove('active');
+      if (confirmed && modalActionCallback) {
+        modalActionCallback();
+      }
+      modalActionCallback = null;
+    }
+
+    // Show custom toast notification
+    let toastTimeout = null;
+    function showToast(text, emoji = '🎉') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').innerText = text;
+      document.getElementById('toast-emoji').innerText = emoji;
+      
+      toast.classList.add('active');
+      
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('active');
+      }, 2500);
+    }
+
+    // Navigation and Themes
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      
+      // Update dynamic style attributes for theme
+      const root = document.documentElement;
+      if (tabId === 'kid-1') {
+        root.style.setProperty('--theme-primary', 'var(--kid1-primary)');
+        root.style.setProperty('--theme-secondary', 'var(--kid1-secondary)');
+        root.style.setProperty('--theme-gradient', 'var(--kid1-gradient)');
+        root.style.setProperty('--theme-bg', 'var(--kid1-bg)');
+        root.style.setProperty('--theme-shadow', 'var(--kid1-shadow)');
+        root.style.setProperty('--theme-bg-gradient', 'var(--kid1-bg-gradient)');
+      } else if (tabId === 'kid-2') {
+        root.style.setProperty('--theme-primary', 'var(--kid2-primary)');
+        root.style.setProperty('--theme-secondary', 'var(--kid2-secondary)');
+        root.style.setProperty('--theme-gradient', 'var(--kid2-gradient)');
+        root.style.setProperty('--theme-bg', 'var(--kid2-bg)');
+        root.style.setProperty('--theme-shadow', 'var(--kid2-shadow)');
+        root.style.setProperty('--theme-bg-gradient', 'var(--kid2-bg-gradient)');
+      } else {
+        // Admin or settings style
+        root.style.setProperty('--theme-primary', 'var(--admin-primary)');
+        root.style.setProperty('--theme-secondary', 'var(--admin-primary)');
+        root.style.setProperty('--theme-gradient', 'var(--admin-gradient)');
+        root.style.setProperty('--theme-bg', '#faf5ff');
+        root.style.setProperty('--theme-shadow', 'var(--admin-shadow)');
+        root.style.setProperty('--theme-bg-gradient', 'var(--admin-bg-gradient)');
+      }
+
+      // Hide all tabs
+      document.querySelectorAll('.tab-view').forEach(view => {
+        view.classList.add('hidden');
+      });
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Show selected tab
+      if (tabId === 'kid-1') {
+        document.getElementById('view-kid-1').classList.remove('hidden');
+        document.getElementById('tab-kid-1').classList.add('active');
+      } else if (tabId === 'kid-2') {
+        document.getElementById('view-kid-2').classList.remove('hidden');
+        document.getElementById('tab-kid-2').classList.add('active');
+      } else if (tabId === 'prompt') {
+        document.getElementById('view-prompt').classList.remove('hidden');
+        document.getElementById('tab-prompt').classList.add('active');
+      } else if (tabId === 'settings') {
+        document.getElementById('view-settings').classList.remove('hidden');
+        document.getElementById('tab-settings').classList.add('active');
+        renderSettingsLists();
+      }
+
+      renderUI();
+    }
+
+    // Apply points animation
+    function animatePoints(kidIndex) {
+      const bubbleId = `bubble-${kidIndex + 1}`;
+      const bubble = document.getElementById(bubbleId);
+      bubble.classList.add('pop');
+      setTimeout(() => {
+        bubble.classList.remove('pop');
+      }, 200);
+    }
+
+    // Toggle Chore Cards
+    function toggleChore(kidIndex, choreId, event) {
+      event.preventDefault(); // Stop double activation on label clicks
+      const kid = state.kids[kidIndex];
+      const chore = state.chores.find(c => c.id === choreId);
+      if (!chore) return;
+
+      const card = document.getElementById(`chore-card-${kidIndex}-${choreId}`);
+      const checkbox = document.getElementById(`chore-check-${kidIndex}-${choreId}`);
+      
+      const isCurrentlyActive = !!kid.switches[choreId];
+      const newActiveState = !isCurrentlyActive;
+
+      // Update State
+      kid.switches[choreId] = newActiveState;
+      checkbox.checked = newActiveState;
+
+      // Calculate Point Change
+      if (newActiveState) {
+        kid.points += chore.points;
+        card.classList.add('chore-active');
+        
+        // Custom Confetti Trigger
+        const rect = card.getBoundingClientRect();
+        const triggerX = rect.left + rect.width / 2;
+        const triggerY = rect.top + rect.height / 2;
+        triggerConfetti(triggerX, triggerY);
+        showToast(`${kid.name} earned +${chore.points} points for "${chore.name}"! 🌟`, chore.emoji);
+      } else {
+        kid.points -= chore.points;
+        card.classList.remove('chore-active');
+        showToast(`Removed "${chore.name}" toggle for ${kid.name}. Points adjusted.`, 'ℹ️');
+      }
+
+      saveToLocalStorage();
+      animatePoints(kidIndex);
+      renderUI();
+    }
+
+    // Toggle Penalty Cards
+    function togglePenalty(kidIndex, penaltyId, event) {
+      event.preventDefault();
+      const kid = state.kids[kidIndex];
+      const penalty = state.penalties.find(p => p.id === penaltyId);
+      if (!penalty) return;
+
+      const card = document.getElementById(`penalty-card-${kidIndex}-${penaltyId}`);
+      const checkbox = document.getElementById(`penalty-check-${kidIndex}-${penaltyId}`);
+      
+      const isCurrentlyActive = !!kid.switches[penaltyId];
+      const newActiveState = !isCurrentlyActive;
+
+      // Update State
+      kid.switches[penaltyId] = newActiveState;
+      checkbox.checked = newActiveState;
+
+      // Calculate Point Change (penalty points are negative)
+      const absPts = Math.abs(penalty.points);
+      if (newActiveState) {
+        kid.points -= absPts; // Deduct penalty points
+        card.classList.add('penalty-active');
+        
+        // Shake feedback
+        card.classList.add('shake-anim');
+        setTimeout(() => card.classList.remove('shake-anim'), 500);
+
+        showToast(`${kid.name} received a penalty of -${absPts} points for "${penalty.name}"! ⚠️`, penalty.emoji || '⚠️');
+      } else {
+        kid.points += absPts; // Put points back if cleared
+        card.classList.remove('penalty-active');
+        showToast(`Removed "${penalty.name}" penalty for ${kid.name}.`, 'ℹ️');
+      }
+
+      saveToLocalStorage();
+      animatePoints(kidIndex);
+      renderUI();
+    }
+
+    // Manual Point Adjustments
+    function applyManualAdjustment(kidIndex) {
+      const kid = state.kids[kidIndex];
+      const input = document.getElementById(`adj-${kidIndex + 1}`);
+      const value = parseInt(input.value, 10);
+
+      if (isNaN(value)) {
+        showToast("Please enter a valid number first!", "⚠️");
+        return;
+      }
+
+      kid.points += value;
+      input.value = ''; // clear
+
+      showToast(`Adjusted ${kid.name}'s points by ${value > 0 ? '+' + value : value}!`, value > 0 ? '✨' : '⚠️');
+      animatePoints(kidIndex);
+      saveToLocalStorage();
+      renderUI();
+    }
+
+    // Confirm Today's Switches Reset
+    function confirmResetSwitches(kidIndex) {
+      const kid = state.kids[kidIndex];
+      openConfirmModal(
+        "Reset Switches?",
+        `Reset all daily chore and penalty toggles for ${kid.name}? Points accumulated so far will NOT be changed.`,
+        "Reset Switches",
+        () => {
+          // Clear switches
+          kid.switches = {};
+          saveToLocalStorage();
+          renderUI();
+          showToast(`Toggles reset for ${kid.name}! Ready for a new day! ☀️`, '🧹');
+        }
+      );
+    }
+
+    // Rename Kids
+    function saveKidNames() {
+      const name1Input = document.getElementById('input-kid1-name');
+      const name2Input = document.getElementById('input-kid2-name');
+
+      state.kids[0].name = name1Input.value.trim() || 'Kid 1';
+      state.kids[1].name = name2Input.value.trim() || 'Kid 2';
+
+      saveToLocalStorage();
+      // Tabs and other titles will update dynamically in renderUI
+      renderUI();
+    }
+
+    // ================= SETTINGS ADD/EDIT/DELETE =================
+
+    // Add Chore
+    function addNewChore() {
+      const nameIn = document.getElementById('new-chore-name');
+      const pointsIn = document.getElementById('new-chore-points');
+      const emojiIn = document.getElementById('new-chore-emoji');
+
+      const name = nameIn.value.trim();
+      const points = parseInt(pointsIn.value, 10);
+      const emoji = emojiIn.value.trim() || '✨';
+
+      if (!name || isNaN(points)) {
+        showToast("Please fill out Name and Points values!", "⚠️");
+        return;
+      }
+
+      const id = 'c_' + Date.now();
+      state.chores.push({ id, name, points, emoji });
+
+      // Clear input fields
+      nameIn.value = '';
+      pointsIn.value = '';
+      emojiIn.value = '';
+
+      saveToLocalStorage();
+      renderSettingsLists();
+      renderUI();
+      showToast(`Chore "${name}" added!`, emoji);
+    }
+
+    // Add Penalty
+    function addNewPenalty() {
+      const nameIn = document.getElementById('new-penalty-name');
+      const pointsIn = document.getElementById('new-penalty-points');
+      const emojiIn = document.getElementById('new-penalty-emoji');
+
+      const name = nameIn.value.trim();
+      let points = parseInt(pointsIn.value, 10);
+      const emoji = emojiIn.value.trim() || '⚠️';
+
+      if (!name || isNaN(points)) {
+        showToast("Please fill out Name and Points values!", "⚠️");
+        return;
+      }
+
+      // Automatically store penalties as negative points
+      if (points > 0) points = -points;
+
+      const id = 'p_' + Date.now();
+      state.penalties.push({ id, name, points, emoji });
+
+      // Clear input fields
+      nameIn.value = '';
+      pointsIn.value = '';
+      emojiIn.value = '';
+
+      saveToLocalStorage();
+      renderSettingsLists();
+      renderUI();
+      showToast(`Penalty "${name}" added!`, emoji);
+    }
+
+    // Delete Chore
+    function deleteChore(id) {
+      const chore = state.chores.find(c => c.id === id);
+      const choreName = chore ? chore.name : "this chore";
+      openConfirmModal(
+        "Delete Chore?",
+        `Are you sure you want to delete "${choreName}"? Kids will no longer see this chore on their dashboards.`,
+        "Delete",
+        () => {
+          // Remove chore from list
+          state.chores = state.chores.filter(c => c.id !== id);
+          
+          // Clean up kid switches
+          state.kids.forEach(kid => {
+            delete kid.switches[id];
+          });
+
+          saveToLocalStorage();
+          renderSettingsLists();
+          renderUI();
+          showToast(`Chore "${choreName}" deleted.`, '🗑️');
+        }
+      );
+    }
+
+    // Delete Penalty
+    function deletePenalty(id) {
+      const penalty = state.penalties.find(p => p.id === id);
+      const penaltyName = penalty ? penalty.name : "this penalty";
+      openConfirmModal(
+        "Delete Penalty?",
+        `Are you sure you want to delete "${penaltyName}"? Kids will no longer see this penalty on their dashboards.`,
+        "Delete",
+        () => {
+          // Remove penalty from list
+          state.penalties = state.penalties.filter(p => p.id !== id);
+
+          // Clean up kid switches
+          state.kids.forEach(kid => {
+            delete kid.switches[id];
+          });
+
+          saveToLocalStorage();
+          renderSettingsLists();
+          renderUI();
+          showToast(`Penalty "${penaltyName}" deleted.`, '🗑️');
+        }
+      );
+    }
+
+    // Trigger Total Reset
+    function triggerTotalReset() {
+      openConfirmModal(
+        "🚨 TOTAL RESET?",
+        "This will permanently WIPE all points, custom chores, custom penalties, and names. It resets the app to its original default state.",
+        "WIPE EVERYTHING",
+        () => {
+          // Wipe to default
+          state.kids = [
+            { id: 'k1', name: 'James', points: 0, switches: {} },
+            { id: 'k2', name: 'Lily', points: 0, switches: {} }
+          ];
+          state.chores = [...DEFAULT_CHORES];
+          state.penalties = [...DEFAULT_PENALTIES];
+
+          saveToLocalStorage();
+          
+          // Populate settings inputs
+          document.getElementById('input-kid1-name').value = state.kids[0].name;
+          document.getElementById('input-kid2-name').value = state.kids[1].name;
+
+          renderSettingsLists();
+          renderUI();
+          showToast("App has been reset to defaults!", "🔄");
+        }
+      );
+    }
+
+    // Render Lists in Settings panel
+    function renderSettingsLists() {
+      const choresContainer = document.getElementById('settings-chores-list');
+      choresContainer.innerHTML = '';
+      
+      state.chores.forEach(chore => {
+        const row = document.createElement('div');
+        row.className = 'settings-item-row';
+        
+        if (editingChoreId === chore.id) {
+          row.innerHTML = `
+            <div class="settings-item-info" style="gap: 4px;">
+              <input type="text" class="edit-input edit-input-emoji" id="edit-chore-emoji-${chore.id}" value="${chore.emoji}">
+              <input type="text" class="edit-input edit-input-name" id="edit-chore-name-${chore.id}" value="${chore.name}">
+              <input type="number" class="edit-input edit-input-points" id="edit-chore-points-${chore.id}" value="${chore.points}">
+            </div>
+            <div class="settings-item-actions">
+              <button class="btn-icon btn-icon-edit" onclick="saveChoreEdit('${chore.id}')" title="Save" style="color:var(--success)">
+                <svg style="width:18px;height:18px;fill:currentColor" viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+              </button>
+              <button class="btn-icon btn-icon-delete" onclick="cancelChoreEdit()" title="Cancel">
+                <svg style="width:18px;height:18px;fill:currentColor" viewBox="0 0 24 24">
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+              </button>
+            </div>
+          `;
+        } else {
+          row.innerHTML = `
+            <div class="settings-item-info">
+              <span style="font-size:18px">${chore.emoji}</span>
+              <span class="settings-item-name">${chore.name}</span>
+              <span class="points-plus" style="font-size:12px; margin-left:4px; font-family:var(--font-display)">(+${chore.points}pts)</span>
+            </div>
+            <div class="settings-item-actions">
+              <button class="btn-icon btn-icon-edit" onclick="startChoreEdit('${chore.id}')" title="Edit Chore">
+                <svg style="width:18px;height:18px;fill:currentColor" viewBox="0 0 24 24">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+              </button>
+              <button class="btn-icon btn-icon-delete" onclick="deleteChore('${chore.id}')" title="Delete Chore">
+                <svg style="width:18px;height:18px;fill:currentColor" viewBox="0 0 24 24">
+                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+              </button>
+            </div>
+          `;
+        }
+        choresContainer.appendChild(row);
+      });
+
+      const penaltiesContainer = document.getElementById('settings-penalties-list');
+      penaltiesContainer.innerHTML = '';
+      
+      state.penalties.forEach(penalty => {
+        const row = document.createElement('div');
+        row.className = 'settings-item-row';
+        
+        if (editingPenaltyId === penalty.id) {
+          row.innerHTML = `
+            <div class="settings-item-info" style="gap: 4px;">
+              <input type="text" class="edit-input edit-input-emoji" id="edit-penalty-emoji-${penalty.id}" value="${penalty.emoji}">
+              <input type="text" class="edit-input edit-input-name" id="edit-penalty-name-${penalty.id}" value="${penalty.name}">
+              <input type="number" class="edit-input edit-input-points" id="edit-penalty-points-${penalty.id}" value="${Math.abs(penalty.points)}">
+            </div>
+            <div class="settings-item-actions">
+              <button class="btn-icon btn-icon-edit" onclick="savePenaltyEdit('${penalty.id}')" title="Save" style="color:var(--success)">
+                <svg style="width:18px;height:18px;fill:currentColor" viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+              </button>
+              <button class="btn-icon btn-icon-delete" onclick="cancelPenaltyEdit()" title="Cancel">
+                <svg style="width:18px;height:18px;fill:currentColor" viewBox="0 0 24 24">
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+              </button>
+            </div>
+          `;
+        } else {
+          row.innerHTML = `
+            <div class="settings-item-info">
+              <span style="font-size:18px">${penalty.emoji}</span>
+              <span class="settings-item-name">${penalty.name}</span>
+              <span class="points-minus" style="font-size:12px; margin-left:4px; font-family:var(--font-display)">(${penalty.points}pts)</span>
+            </div>
+            <div class="settings-item-actions">
+              <button class="btn-icon btn-icon-edit" onclick="startPenaltyEdit('${penalty.id}')" title="Edit Penalty">
+                <svg style="width:18px;height:18px;fill:currentColor" viewBox="0 0 24 24">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+              </button>
+              <button class="btn-icon btn-icon-delete" onclick="deletePenalty('${penalty.id}')" title="Delete Penalty">
+                <svg style="width:18px;height:18px;fill:currentColor" viewBox="0 0 24 24">
+                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+              </button>
+            </div>
+          `;
+        }
+        penaltiesContainer.appendChild(row);
+      });
+    }
+
+    function startChoreEdit(id) {
+      editingChoreId = id;
+      renderSettingsLists();
+    }
+
+    function cancelChoreEdit() {
+      editingChoreId = null;
+      renderSettingsLists();
+    }
+
+    function saveChoreEdit(id) {
+      const emoji = document.getElementById(`edit-chore-emoji-${id}`).value.trim() || '✨';
+      const name = document.getElementById(`edit-chore-name-${id}`).value.trim();
+      const points = parseInt(document.getElementById(`edit-chore-points-${id}`).value, 10);
+
+      if (!name || isNaN(points)) {
+        showToast("Please fill out Name and Points!", "⚠️");
+        return;
+      }
+
+      const chore = state.chores.find(c => c.id === id);
+      if (chore) {
+        chore.emoji = emoji;
+        chore.name = name;
+        chore.points = points;
+      }
+
+      editingChoreId = null;
+      saveToLocalStorage();
+      renderSettingsLists();
+      renderUI();
+      showToast("Chore updated successfully!");
+    }
+
+    function startPenaltyEdit(id) {
+      editingPenaltyId = id;
+      renderSettingsLists();
+    }
+
+    function cancelPenaltyEdit() {
+      editingPenaltyId = null;
+      renderSettingsLists();
+    }
+
+    function savePenaltyEdit(id) {
+      const emoji = document.getElementById(`edit-penalty-emoji-${id}`).value.trim() || '⚠️';
+      const name = document.getElementById(`edit-penalty-name-${id}`).value.trim();
+      let points = Math.abs(parseInt(document.getElementById(`edit-penalty-points-${id}`).value, 10));
+
+      if (!name || isNaN(points)) {
+        showToast("Please fill out Name and Points!", "⚠️");
+        return;
+      }
+
+      // Penalties are stored as negative points
+      points = -points;
+
+      const penalty = state.penalties.find(p => p.id === id);
+      if (penalty) {
+        penalty.emoji = emoji;
+        penalty.name = name;
+        penalty.points = points;
+      }
+
+      editingPenaltyId = null;
+      saveToLocalStorage();
+      renderSettingsLists();
+      renderUI();
+      showToast("Penalty updated successfully!");
+    }
+
+    // Copy Prompt Text to Clipboard
+    function copyPromptText() {
+      const text = document.getElementById('prompt-content').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('btn-copy-prompt');
+        const oldHTML = btn.innerHTML;
+        btn.innerHTML = '✅ Copied!';
+        btn.style.background = 'var(--success)';
+        
+        setTimeout(() => {
+          btn.innerHTML = oldHTML;
+          btn.style.background = '';
+        }, 2000);
+        showToast("Prompt copied to clipboard!", "📝");
+      }).catch(err => {
+        console.error("Could not copy text", err);
+      });
+    }
+
+    // ================= MAIN RENDER =================
+    function renderUI() {
+      // 1. Update kid tabs
+      const kid1Tab = document.getElementById('tab-kid-1');
+      const kid2Tab = document.getElementById('tab-kid-2');
+      
+      kid1Tab.innerText = state.kids[0].name || 'Kid 1';
+      kid2Tab.innerText = state.kids[1].name || 'Kid 2';
+
+      // 2. Update dashboard titles & points
+      document.getElementById('hero-title-1').innerText = `${state.kids[0].name}'s Progress`;
+      document.getElementById('hero-title-2').innerText = `${state.kids[1].name}'s Progress`;
+
+      document.getElementById('points-1').innerText = state.kids[0].points;
+      document.getElementById('points-2').innerText = state.kids[1].points;
+
+      // 3. Render Dashboard Items (Chores & Penalties Grid)
+      for (let kidIndex = 0; kidIndex < 2; kidIndex++) {
+        const kid = state.kids[kidIndex];
+
+        // RENDER CHORES
+        const choresGrid = document.getElementById(`chores-grid-${kidIndex + 1}`);
+        choresGrid.innerHTML = '';
+
+        state.chores.forEach(chore => {
+          const isToggled = !!kid.switches[chore.id];
+          const card = document.createElement('div');
+          card.id = `chore-card-${kidIndex}-${chore.id}`;
+          card.className = `item-card ${isToggled ? 'chore-active' : ''}`;
+          card.onclick = (e) => toggleChore(kidIndex, chore.id, e);
+
+          card.innerHTML = `
+            <div class="item-info">
+              <div class="item-icon">${chore.emoji}</div>
+              <div class="item-details">
+                <span class="item-name">${chore.name}</span>
+                <span class="item-points points-plus">+${chore.points} pts</span>
+              </div>
+            </div>
+            <div class="switch-container">
+              <label class="switch">
+                <input type="checkbox" id="chore-check-${kidIndex}-${chore.id}" ${isToggled ? 'checked' : ''} onclick="event.stopPropagation()">
+                <span class="slider"></span>
+              </label>
+            </div>
+          `;
+          choresGrid.appendChild(card);
+        });
+
+        // RENDER PENALTIES
+        const penaltiesGrid = document.getElementById(`penalties-grid-${kidIndex + 1}`);
+        penaltiesGrid.innerHTML = '';
+
+        state.penalties.forEach(penalty => {
+          const isToggled = !!kid.switches[penalty.id];
+          const card = document.createElement('div');
+          card.id = `penalty-card-${kidIndex}-${penalty.id}`;
+          card.className = `item-card ${isToggled ? 'penalty-active' : ''}`;
+          card.onclick = (e) => togglePenalty(kidIndex, penalty.id, e);
+
+          card.innerHTML = `
+            <div class="item-info">
+              <div class="item-icon">${penalty.emoji}</div>
+              <div class="item-details">
+                <span class="item-name">${penalty.name}</span>
+                <span class="item-points points-minus">${penalty.points} pts</span>
+              </div>
+            </div>
+            <div class="switch-container">
+              <label class="switch">
+                <input type="checkbox" id="penalty-check-${kidIndex}-${penalty.id}" ${isToggled ? 'checked' : ''} onclick="event.stopPropagation()">
+                <span class="slider"></span>
+              </label>
+            </div>
+          `;
+          penaltiesGrid.appendChild(card);
+        });
+      }
+    }
+
+    // ================= CUSTOM CONFETTI ANIMATION =================
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let particles = [];
+    let animationId = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 8 + 4;
+        
+        // Random pastel-like colors
+        const colors = [
+          '#ff6b6b', '#ff8e53', '#4e65ff', '#00d2fc', 
+          '#a855f7', '#ec4899', '#10b981', '#f59e0b'
+        ];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Physics
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 8 + 3;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed - Math.random() * 5 - 2; // Bias upwards
+        this.gravity = 0.3;
+        this.opacity = 1;
+        this.fade = Math.random() * 0.015 + 0.01;
+      }
+
+      update() {
+        this.vy += this.gravity;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.opacity -= this.fade;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function triggerConfetti(startX, startY) {
+      // Spawn particles
+      for (let i = 0; i < 40; i++) {
+        particles.push(new Particle(startX, startY));
+      }
+      
+      // Start loop if not running
+      if (!animationId) {
+        animateParticles();
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Update and draw
+      particles.forEach((p, idx) => {
+        p.update();
+        p.draw();
+        
+        // Remove dead particles
+        if (p.opacity <= 0 || p.y > canvas.height) {
+          particles.splice(idx, 1);
+        }
+      });
+
+      if (particles.length > 0) {
+        animationId = requestAnimationFrame(animateParticles);
+      } else {
+        animationId = null;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    // ================= INITIALIZATION =================
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      
+      // Initialize renaming inputs in settings panel with current data
+      document.getElementById('input-kid1-name').value = state.kids[0].name;
+      document.getElementById('input-kid2-name').value = state.kids[1].name;
+      
+      // Set correct active tab
+      switchTab(state.activeTab);
+    });
+  </script>
+</body>
+</html>
