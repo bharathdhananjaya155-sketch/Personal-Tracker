@@ -2,6 +2,7 @@
 :root {
   --font-display: 'Fredoka', sans-serif;
   --font-body: 'Quicksand', sans-serif;
+  color-scheme: light;
   
   /* Global Colors */
   --bg-primary: #f8fafc;
@@ -88,6 +89,7 @@ body {
   padding: 20px 16px;
   position: relative;
   animation: fadeIn 0.4s ease-out;
+  overflow: hidden;
 }
 
 @keyframes fadeIn {
@@ -109,6 +111,7 @@ header {
   font-weight: 800;
   font-size: 28px;
   background: linear-gradient(135deg, #ff5a79 0%, #8b5cf6 50%, #06b6d4 100%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: flex;
@@ -309,9 +312,10 @@ header {
   outline: none;
   width: 100%;
   text-align: center;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: #ffffff;
   transition: all 0.2s ease;
-  color: var(--text-main);
+  color: #0f172a;
+  -webkit-text-fill-color: #0f172a;
   min-width: 0;
 }
 
@@ -937,8 +941,56 @@ header {
   display: none !important;
 }
 
-/* Mobile settings optimizations */
+/* Mobile dashboard & settings optimizations */
 @media (max-width: 480px) {
+  .app-container {
+    padding: 16px 10px;
+  }
+
+  /* Controls row: stack Adjust Points and Day Over on small screens */
+  .controls-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Make item cards (chores/penalties) compact so they don't overflow */
+  .item-card {
+    padding: 12px;
+    border-radius: var(--border-radius-sm);
+  }
+  .item-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+  .item-info {
+    gap: 10px;
+  }
+  .item-name {
+    font-size: 14px;
+  }
+  .item-points {
+    font-size: 12px;
+  }
+  .switch {
+    width: 44px;
+    height: 26px;
+  }
+  .slider:before {
+    height: 18px;
+    width: 18px;
+  }
+  .item-card.chore-active input + .slider:before,
+  .item-card.penalty-active input + .slider:before {
+    transform: translateX(18px);
+  }
+
+  /* Penalties grid - ensure it stays within bounds */
+  .grid-container {
+    gap: 10px;
+  }
+
+  /* Settings view */
   .settings-section-card {
     padding: 18px;
     border-radius: var(--border-radius-md);
